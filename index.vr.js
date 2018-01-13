@@ -19,28 +19,37 @@ export default class StarWars extends React.Component {
   }
 
   componentDidMount() {
+    this.spinAnimation();
+  }
+
+  spinAnimation() {
+    this.state.spin.setValue(0);
     Animated.timing(this.state.spin, {
       toValue: 1,
       duration: 3000,
-      easing: Easing.ease
-    }).start();
+      easing: Easing.linear
+    }).start(() => this.spinAnimation());
   }
   render() {
+    const spin = this.state.spin.interpolate({
+      inputRange: [0, 360],
+      outputRange: ["0deg", "360deg"]
+    });
+
+    const AnimatedModel = Animated.createAnimatedComponent(Model);
+
     return (
       <View>
         <Pano source={asset("space.jpg")} />
-        <Model
+        <AnimatedModel
           source={{
             obj: asset("death-star.obj")
           }}
           style={{
             transform: [
-              { translate: [0, 0, -2] },
+              { translate: [0, 0, -8] },
               {
-                rotate: this.state.spin.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ["0deg", "360deg"]
-                })
+                rotate: spin
               }
             ]
           }}
