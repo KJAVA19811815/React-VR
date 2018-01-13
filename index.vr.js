@@ -1,34 +1,57 @@
-import React from 'react';
+import React from "react";
 import {
   AppRegistry,
   asset,
   Pano,
   Text,
   View,
-} from 'react-vr';
+  Model,
+  Animated
+} from "react-vr";
+import { Easing } from "react-native";
 
 export default class StarWars extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      spin: new Animated.Value(0)
+    };
+  }
+
+  componentDidMount() {
+    Animated.timing(this.state.spin, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.ease
+    }).start();
+  }
   render() {
     return (
       <View>
-        <Pano source={asset('chess-world.jpg')}/>
-        <Text
+        <Pano source={asset("space.jpg")} />
+        <Model
+          source={{
+            obj: asset("death-star.obj")
+          }}
           style={{
-            backgroundColor: '#777879',
-            fontSize: 0.8,
-            fontWeight: '400',
-            layoutOrigin: [0.5, 0.5],
-            paddingLeft: 0.2,
-            paddingRight: 0.2,
-            textAlign: 'center',
-            textAlignVertical: 'center',
-            transform: [{translate: [0, 0, -3]}],
-          }}>
-          hello
-        </Text>
+            transform: [
+              { translate: [0, 0, -2] },
+              {
+                rotate: this.state.spin.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "360deg"]
+                })
+              }
+            ]
+          }}
+          texture={
+            "https://s3-us-west-2.amazonaws.com/s.cdpn.io/827672/death-star.png"
+          }
+          wireframe={false}
+        />
       </View>
     );
   }
-};
+}
 
-AppRegistry.registerComponent('StarWars', () => StarWars);
+AppRegistry.registerComponent("StarWars", () => StarWars);
